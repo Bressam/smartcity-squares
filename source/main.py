@@ -22,7 +22,10 @@ def setup():
             wlanStation.disconnect()
     else:
         return wlanStation, mqttClient
-    
+
+def responseReceived(topic, msg):
+    print(topic)
+    print(msg)
 
 # Setup WLANClient and MQTTClient
 def setupConnection():
@@ -53,7 +56,17 @@ def setupConnection():
 
 # Send data through connection setup
 wlanStation, mqttClient = setup()
-mqttClient.publish("bressam/testtopic", "connected")
-time.sleep(1)
+mqttClient.set_callback(responseReceived)
+mqttClient.subscribe("bressam/esp32client")
+
+print("Waiting for responses")
+for i in range(60):
+    mqttClient.check_msg()
+    time.sleep(1)
+
+#publish test
+#mqttClient.publish("bressam/testtopic", "connected")
+#time.sleep(1)
+
 mqttClient.disconnect()
 wlanStation.disconnect()
