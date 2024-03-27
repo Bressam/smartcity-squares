@@ -2,6 +2,10 @@ import wifi_utils
 import time
 from mqtt_config import MqttDefaultConfig
 from umqttsimple import MQTTClient
+from machine import Pin
+
+#Pins
+LED = Pin(5, Pin.OUT)
 
 # Checks if needed connections are setup
 def checkSetupSuccessfully(mqttClient, wlanStation):
@@ -26,6 +30,11 @@ def setup():
 def responseReceived(topic, msg):
     print(topic)
     print(msg)
+    if msg.decode() == "ON":
+        LED.on()
+    if msg.decode() == "OFF":
+        LED.off()
+
 
 # Setup WLANClient and MQTTClient
 def setupConnection():
