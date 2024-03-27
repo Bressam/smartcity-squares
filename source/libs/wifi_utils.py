@@ -1,6 +1,7 @@
-def conecta(ssid, senha, shouldPrintLoad = True):
-    import network
-    import time
+import network
+import time
+
+def createWLANStation(ssid, senha, shouldPrintLoad = True):
     station = network.WLAN(network.STA_IF)
     station.active(True)
     station.connect(ssid, senha)
