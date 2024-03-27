@@ -21,8 +21,8 @@
   "connections": [
     [ "esp:TX", "$serialMonitor:RX", "", [] ],
     [ "esp:RX", "$serialMonitor:TX", "", [] ],
-    [ "led1:C", "esp:GND.2", "green", [ "v0" ] ],
-    [ "led1:A", "esp:5", "green", [ "v0" ] ]
+    [ "led1:C", "esp:GND.2", "black", [ "v0" ] ],
+    [ "led1:A", "esp:5", "red", [ "v0" ] ]
   ],
   "dependencies": {}
 }
