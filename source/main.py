@@ -59,10 +59,9 @@ wlanStation, mqttClient = setup()
 mqttClient.set_callback(responseReceived)
 mqttClient.subscribe("bressam/esp32client")
 
-print("Waiting for responses")
-for i in range(60):
-    mqttClient.check_msg()
-    time.sleep(1)
+print("Waiting for responses for 60s")
+# Not really a sleep, it waitis 60s calling check_msg each 0.1s
+mqttClient.sleep(60)
 
 #publish test
 #mqttClient.publish("bressam/testtopic", "connected")
