@@ -11,4 +11,4 @@ Language used was uPython.
    - ESP32 as IoT device;
    - HiveMQ as MQTT Broker platform, to listen and publish data;
    - Node-RED platform for dashboard and visualization of MQTT collected data;
-<img width=720px src="https://github.com/Bressam/smartcity-squares/blob/main/SampleResources/system_overview.png">
+<img width=720px src="https://github.com/Bressam/smartcity-squares/blob/main/SampleResources/system_overview_colors.png">
