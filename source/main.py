@@ -1,11 +1,13 @@
 import wifi_utils
 import time
+from servo import Servo
 from mqtt_config import MqttDefaultConfig
 from umqttsimple import MQTTClient
 from machine import Pin
 
 #Pins
 LED = Pin(5, Pin.OUT)
+servo = Servo(2)
 
 # Checks if needed connections are setup
 def checkSetupSuccessfully(mqttClient, wlanStation):
@@ -78,6 +80,7 @@ print("Waiting for responses for 60s")
 # mqttClient.sleep(60)
 for i in range(3*60):
     print("Sending data: " + f"{i}")
+    servo.set_angle(i)
     mqttClient.publish("bressam/nodered/loop", f"{i}")
     mqttClient.sleep(1)
 

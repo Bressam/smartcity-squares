@@ -16,13 +16,17 @@
       "top": -13.2,
       "left": 138.2,
       "attrs": { "color": "blue" }
-    }
+    },
+    { "type": "wokwi-servo", "id": "servo1", "top": 94, "left": 211.2, "attrs": {} }
   ],
   "connections": [
     [ "esp:TX", "$serialMonitor:RX", "", [] ],
     [ "esp:RX", "$serialMonitor:TX", "", [] ],
     [ "led1:C", "esp:GND.2", "black", [ "v0" ] ],
-    [ "led1:A", "esp:5", "red", [ "v0" ] ]
+    [ "led1:A", "esp:5", "red", [ "v0" ] ],
+    [ "servo1:GND", "led1:C", "black", [ "h-57.6", "v-86.4", "h105.6" ] ],
+    [ "servo1:V+", "esp:5V", "red", [ "h-57.6", "v76.9", "h-172.8", "v-28.8" ] ],
+    [ "servo1:PWM", "esp:2", "green", [ "h0" ] ]
   ],
   "dependencies": {}
 }
