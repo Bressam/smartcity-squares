@@ -75,7 +75,11 @@ mqttClient.subscribe("bressam/esp32client")
 
 print("Waiting for responses for 60s")
 # Not really a sleep, it waitis 60s calling check_msg each 0.1s
-mqttClient.sleep(60)
+# mqttClient.sleep(60)
+for i in range(3*60):
+    print("Sending data: " + f"{i}")
+    mqttClient.publish("bressam/nodered/loop", f"{i}")
+    mqttClient.sleep(1)
 
 #publish test
 #mqttClient.publish("bressam/testtopic", "connected")
