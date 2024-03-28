@@ -34,7 +34,12 @@ def responseReceived(topic, msg):
         LED.on()
     if msg.decode() == "OFF":
         LED.off()
+    
+    updateDashBoard()
 
+# Send data do update node-red MQQT listener
+def updateDashBoard():
+    mqttClient.publish("bressam/nodered/led", str(LED.value()))
 
 # Setup WLANClient and MQTTClient
 def setupConnection():
