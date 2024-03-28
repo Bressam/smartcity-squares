@@ -36,7 +36,15 @@ def responseReceived(topic, msg):
         LED.on()
     if msg.decode() == "OFF":
         LED.off()
-    
+    servoAngle = msg.decode()
+    print(servoAngle)
+    print(type(servoAngle))
+    servoAngleInt = int(servoAngle)
+    print(servoAngleInt)
+    print(type(servoAngleInt))
+    servo.set_angle(servoAngleInt)
+    # if servoAngle > 0 and servoAngle <= 180:
+    #     servo.set_angle(servoAngle)
     updateDashBoard()
 
 # Send data do update node-red MQQT listener
@@ -80,7 +88,6 @@ print("Waiting for responses for 60s")
 # mqttClient.sleep(60)
 for i in range(3*60):
     print("Sending data: " + f"{i}")
-    servo.set_angle(i)
     mqttClient.publish("bressam/nodered/loop", f"{i}")
     mqttClient.sleep(1)
 
