@@ -5,6 +5,8 @@ from umqttsimple import MQTTClient
 from hal import Hal
 import _thread
 
+version = 1.000.000
+
 enableMQTTDebugPrint = True
 isUnderManualControl = False
 
