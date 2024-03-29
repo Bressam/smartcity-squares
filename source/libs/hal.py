@@ -19,10 +19,10 @@ class Hal:
         print("Initial humidity reading: ", self.humidityPercentage)
 
     def toggleConnectionLed(self):
-        if self.sprinklerLedIndicator.value() == 0:
-            self.sprinklerLedIndicator.on()
+        if self.getLedValue() == 0:
+            self.setLedOn()
         else:
-            self.sprinklerLedIndicator.off()
+            self.setLedOff()
 
     # HAL Pins communication
     def updateLoadingIndication(self):
@@ -37,17 +37,17 @@ class Hal:
         self.updateLoadingIndication()
     
     def setLedOn(self):
-        self.connectionIndicator.on()
+        self.sprinklerLedIndicator.on()
     
     def setLedOff(self):
-        self.connectionIndicator.off()
+        self.sprinklerLedIndicator.off()
     
     def setServoAngle(self, servoAngleInt):
         if servoAngleInt >= 0 and servoAngleInt <= 180:
             self.servo.set_angle(servoAngleInt)
     
     def getHumidityValue(self):
-        return humidityPercentage
+        return self.humidityPercentage
     
     def getLedValue(self):
         return self.sprinklerLedIndicator.value()
