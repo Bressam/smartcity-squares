@@ -13,7 +13,7 @@ Language used was uPython.
    - Node-RED platform for dashboard and visualization of MQTT collected data;
 <img width=720px src="https://github.com/Bressam/smartcity-squares/blob/main/SampleResources/system_overview_colors.png">
 
-## Project objective
+## Project Objective
 - The main objective is that the system measures constantly the earth humidity of each sqaure sub division, and if detected low humidity at that division of the square it automatically turns on the sprinklers system and also a light for indication;
 - The system constantly update data remotely to a dashboard (image below), making possible 2 things:
     - Remotely checking values measured (ground humidity and percentage of water flow at sprinklers) and if system is active or not;
@@ -28,4 +28,7 @@ Language used was uPython.
 | -------------|-------------|
 | <img width=360px src="https://github.com/Bressam/smartcity-squares/blob/main/SampleResources/1.png">|<img width=360px src="https://github.com/Bressam/smartcity-squares/blob/main/SampleResources/2.png">|
 
+## Node-RED & Circuit Design
+<img width=720px src="https://github.com/Bressam/smartcity-squares/blob/main/SampleResources/Node-RED-Layout.png">
 
+<img width=720px src="https://github.com/Bressam/smartcity-squares/blob/main/SampleResources/Sample-circuit-design-ESP32.png">
