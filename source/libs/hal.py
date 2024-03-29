@@ -32,7 +32,6 @@ class Hal:
 
     # HAL API
     def setLoadingIndicationTo(self, isLoading):
-        print("Set loading to: ", isLoading)
         self.isLoading = isLoading
         self.updateLoadingIndication()
     
@@ -47,6 +46,8 @@ class Hal:
             self.servo.set_angle(servoAngleInt)
     
     def getHumidityValue(self):
+        self.dht22.measure()
+        self.humidityPercentage = self.dht22.humidity()
         return self.humidityPercentage
     
     def getLedValue(self):

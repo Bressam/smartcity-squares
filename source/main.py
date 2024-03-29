@@ -32,8 +32,7 @@ def setup():
 
 def responseReceived(topic, msg):
     global hal
-    print(topic)
-    print(msg)
+    print("Received msg: ", msg, "From topic: ", topic)
 
     # LED Control
     if msg.decode() == "ON" or msg.decode() == "OFF":
@@ -45,16 +44,8 @@ def responseReceived(topic, msg):
     else:
         servoAngle = msg.decode()
         if servoAngle.isdigit():
-            print(servoAngle)
-            print(type(servoAngle))
             servoAngleInt = int(servoAngle)
-            print(servoAngleInt)
-            print(type(servoAngleInt))
             hal.setServoAngle(servoAngleInt)
-            # if servoAngle > 0 and servoAngle <= 180:
-            #     servo.set_angle(servoAngle)
-    
-    updateDashBoard()
 
 # Send data do update node-red MQQT listener
 def updateDashBoard():
@@ -102,10 +93,6 @@ while True:
     updateDashBoard()
     # Not really a sleep, its waiting for 1s calling check_msg each 0.1s
     mqttClient.sleep(1)
-
-#publish test
-#mqttClient.publish("bressam/testtopic", "connected")
-#time.sleep(1)
 
 mqttClient.disconnect()
 wlanStation.disconnect()
