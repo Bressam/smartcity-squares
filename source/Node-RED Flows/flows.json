@@ -1,31 +1,31 @@
 [
     {
-        "id": "b566eb2608547fa9",
-        "type": "ui_gauge",
+        "id": "0b3124251aeb1788",
+        "type": "ui_slider",
         "z": "c14b2c2394cd7539",
         "name": "",
+        "label": "Sprinkler servo angle slider",
+        "tooltip": "",
         "group": "97c1eb79cec3d29b",
-        "order": 0,
+        "order": 3,
         "width": 0,
         "height": 0,
-        "gtype": "gage",
-        "title": "Earth Humidity Percentage",
-        "label": "units",
-        "format": "{{payload}}",
+        "passthru": true,
+        "outs": "end",
+        "topic": "topic",
+        "topicType": "msg",
         "min": 0,
-        "max": "120",
-        "colors": [
-            "#8b805b",
-            "#18b983",
-            "#702c0f"
-        ],
-        "seg1": "30",
-        "seg2": "65",
-        "diff": false,
+        "max": "180",
+        "step": 1,
         "className": "",
-        "x": 500,
-        "y": 320,
-        "wires": []
+        "x": 480,
+        "y": 700,
+        "wires": [
+            [
+                "18e6a6484ba72e5f",
+                "4ef42f38635657a7"
+            ]
+        ]
     },
     {
         "id": "97c1eb79cec3d29b",

@@ -89,10 +89,8 @@ wlanStation, mqttClient = setup()
 mqttClient.set_callback(responseReceived)
 mqttClient.subscribe("bressam/esp32client")
 
+# Main loop
 while True:
     updateDashBoard()
     # Not really a sleep, its waiting for 1s calling check_msg each 0.1s
     mqttClient.sleep(1)
-
-mqttClient.disconnect()
-wlanStation.disconnect()
