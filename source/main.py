@@ -5,6 +5,23 @@ from umqttsimple import MQTTClient
 from hal import Hal
 import _thread
 
+enableMQTTDebugPrint = True
+isUnderManualControl = False
+
+def activateSprinklerIfNeeded():
+    global isUnderManualControl
+    if isUnderManualControl: return
+
+    global hal
+    humidityPercentage = hal.getHumidityValue()
+
+    # Low humidity, turn sprinklers until safe level reached
+    print(humidityPercentage)
+    if humidityPercentage <= 30:
+        hal.setSprinklersTo(True)
+    elif humidityPercentage >= 60:
+        hal.setSprinklersTo(False)
+
 
 # Checks if needed connections are setup
 def checkSetupSuccessfully(mqttClient, wlanStation):
@@ -32,16 +49,22 @@ def setup():
 
 def responseReceived(topic, msg):
     global hal
-    print("Received msg: ", msg, "From topic: ", topic)
+    global isUnderManualControl
+    
+    if enableMQTTDebugPrint: print("Received msg: ", msg, "From topic: ", topic)
 
-    # LED Control
+    # Manual sprinkler control
     if msg.decode() == "ON" or msg.decode() == "OFF":
         if msg.decode() == "ON":
-            hal.setLedOn()
+            hal.setSprinklersTo(True)
+            updateDashBoard()
+            isUnderManualControl = True
         if msg.decode() == "OFF":
-            hal.setLedOff()
-    # Sprinkler control
+            isUnderManualControl = False
+            hal.setSprinklersTo(False)
+    # Sprinkler strength control. Only available under manual control
     else:
+        if not isUnderManualControl: return
         servoAngle = msg.decode()
         if servoAngle.isdigit():
             servoAngleInt = int(servoAngle)
@@ -49,12 +72,18 @@ def responseReceived(topic, msg):
 
 # Send data do update node-red MQQT listener
 def updateDashBoard():
+    global isUnderManualControl
     global hal
-    ledStateStr = str(hal.getLedValue())
+    sprinklerSystemStateStr = str(hal.getLedValue())
     humidityValueStr = str(hal.getHumidityValue())
-    print("Sending data: ", " Humidity: ", humidityValueStr, "Sprinkler and LED State: ", ledStateStr)
-    mqttClient.publish("bressam/nodered/led", ledStateStr)
+    print("Sending data: ", " Humidity: ", humidityValueStr, "Sprinkler state: ", sprinklerSystemStateStr)
+    mqttClient.publish("bressam/nodered/sprinkler", sprinklerSystemStateStr)
     mqttClient.publish("bressam/nodered/humidity", humidityValueStr)
+
+    if not isUnderManualControl:
+        sprinklerAngleStr = str(hal.getSprinklerAngle())
+        print("Sending Sprinkler angle: ", sprinklerAngleStr)
+        mqttClient.publish("bressam/nodered/sprinkler/angle", sprinklerAngleStr)
 
 # Setup WLANClient and MQTTClient
 def setupConnection():
@@ -86,11 +115,17 @@ def setupConnection():
 # Send data through connection setup
 hal = Hal()
 wlanStation, mqttClient = setup()
+# Start syncing manual to off to remote control
+mqttClient.publish("bressam/nodered/sprinkler/manualcontrol", "OFF")
+
+# Setup callbacks and listener
 mqttClient.set_callback(responseReceived)
 mqttClient.subscribe("bressam/esp32client")
 
 # Main loop
 while True:
+    hal.perfomSensorReading()
+    activateSprinklerIfNeeded()
     updateDashBoard()
     # Not really a sleep, its waiting for 1s calling check_msg each 0.1s
     mqttClient.sleep(1)

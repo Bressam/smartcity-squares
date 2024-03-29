@@ -16,7 +16,8 @@ class Hal:
     def __init__(self):
         self.dht22.measure()
         self.humidityPercentage = self.dht22.humidity()
-        print("Initial humidity reading: ", self.humidityPercentage)
+        self.setSprinklersTo(False)
+        print("Sprinklers Off. Initial humidity reading: ", self.humidityPercentage)
 
     def toggleConnectionLed(self):
         if self.getLedValue() == 0:
@@ -31,6 +32,10 @@ class Hal:
             time.sleep(0.5)
 
     # HAL API
+    def perfomSensorReading(self):
+        self.dht22.measure()
+        self.humidityPercentage = self.dht22.humidity()
+
     def setLoadingIndicationTo(self, isLoading):
         self.isLoading = isLoading
         self.updateLoadingIndication()
@@ -46,9 +51,18 @@ class Hal:
             self.servo.set_angle(servoAngleInt)
     
     def getHumidityValue(self):
-        self.dht22.measure()
-        self.humidityPercentage = self.dht22.humidity()
         return self.humidityPercentage
     
     def getLedValue(self):
         return self.sprinklerLedIndicator.value()
+
+    def setSprinklersTo(self, isOn):
+        if isOn:
+            self.setServoAngle(180)
+            self.setLedOn()
+        else:
+            self.setServoAngle(0)
+            self.setLedOff()
+    
+    def getSprinklerAngle(self):
+        return self.servo.angle

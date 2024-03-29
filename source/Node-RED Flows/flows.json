@@ -1,47 +1,743 @@
 [
     {
-        "id": "0b3124251aeb1788",
-        "type": "ui_slider",
+        "id": "c14b2c2394cd7539",
+        "type": "tab",
+        "label": "Main Flow",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "22a231b34043d580",
+        "type": "inject",
         "z": "c14b2c2394cd7539",
         "name": "",
-        "label": "Sprinkler servo angle slider",
-        "tooltip": "",
-        "group": "97c1eb79cec3d29b",
-        "order": 3,
-        "width": 0,
-        "height": 0,
-        "passthru": true,
-        "outs": "end",
-        "topic": "topic",
-        "topicType": "msg",
-        "min": 0,
-        "max": "180",
-        "step": 1,
-        "className": "",
-        "x": 480,
-        "y": 700,
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "Test topic",
+        "payload": "",
+        "payloadType": "date",
+        "x": 250,
+        "y": 120,
         "wires": [
             [
-                "18e6a6484ba72e5f",
+                "fb65508e0ba15b92"
+            ]
+        ]
+    },
+    {
+        "id": "fb65508e0ba15b92",
+        "type": "debug",
+        "z": "c14b2c2394cd7539",
+        "name": "Debug timestamp",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 490,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "1bf8948a0b864316",
+        "type": "mqtt in",
+        "z": "c14b2c2394cd7539",
+        "name": "",
+        "topic": "bressam/nodered/humidity",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "cb0cc5b49b11609f",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 210,
+        "y": 340,
+        "wires": [
+            [
+                "b566eb2608547fa9",
+                "fd1fc03edc02dd2d"
+            ]
+        ]
+    },
+    {
+        "id": "ba17814acf187c65",
+        "type": "debug",
+        "z": "c14b2c2394cd7539",
+        "name": "MQTT Print",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 450,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "b566eb2608547fa9",
+        "type": "ui_gauge",
+        "z": "c14b2c2394cd7539",
+        "name": "",
+        "group": "97c1eb79cec3d29b",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Earth Humidity Percentage",
+        "label": "units",
+        "format": "{{payload}}",
+        "min": 0,
+        "max": "120",
+        "colors": [
+            "#8b805b",
+            "#18b983",
+            "#702c0f"
+        ],
+        "seg1": "30",
+        "seg2": "65",
+        "diff": false,
+        "className": "",
+        "x": 500,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "fd1fc03edc02dd2d",
+        "type": "ui_chart",
+        "z": "c14b2c2394cd7539",
+        "name": "",
+        "group": "97c1eb79cec3d29b",
+        "order": 2,
+        "width": 10,
+        "height": 4,
+        "label": "Earth humidity percentage",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "dd HH:mm",
+        "interpolate": "step",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "604800",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 500,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "adfee6de77120412",
+        "type": "change",
+        "z": "c14b2c2394cd7539",
+        "name": "Bool to String",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "true",
+                "fromt": "bool",
+                "to": "ON",
+                "tot": "str"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "false",
+                "fromt": "bool",
+                "to": "OFF",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 640,
+        "y": 860,
+        "wires": [
+            [
+                "e9c479154fa0a44a",
                 "4ef42f38635657a7"
             ]
         ]
     },
     {
+        "id": "e9c479154fa0a44a",
+        "type": "debug",
+        "z": "c14b2c2394cd7539",
+        "name": "Switch string output",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "4ef42f38635657a7",
+        "type": "mqtt out",
+        "z": "c14b2c2394cd7539",
+        "name": "bressam/esp32client",
+        "topic": "bressam/esp32client",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "cb0cc5b49b11609f",
+        "x": 1080,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "a0e9dd25efc6901e",
+        "type": "mqtt in",
+        "z": "c14b2c2394cd7539",
+        "name": "",
+        "topic": "bressam/nodered/#",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "cb0cc5b49b11609f",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 190,
+        "y": 220,
+        "wires": [
+            [
+                "ba17814acf187c65"
+            ]
+        ]
+    },
+    {
+        "id": "6d487e37346cc856",
+        "type": "mqtt in",
+        "z": "c14b2c2394cd7539",
+        "name": "",
+        "topic": "bressam/nodered/sprinkler",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "cb0cc5b49b11609f",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 210,
+        "y": 480,
+        "wires": [
+            [
+                "b75ccfc419dd64a5"
+            ]
+        ]
+    },
+    {
+        "id": "b75ccfc419dd64a5",
+        "type": "change",
+        "z": "c14b2c2394cd7539",
+        "name": "String to Bool",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "1",
+                "fromt": "num",
+                "to": "true",
+                "tot": "bool"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "0",
+                "fromt": "num",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 440,
+        "y": 480,
+        "wires": [
+            [
+                "d84d8a6251baf619"
+            ]
+        ]
+    },
+    {
+        "id": "bff72688154fa861",
+        "type": "debug",
+        "z": "c14b2c2394cd7539",
+        "name": "Received Sprinkler value",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "d84d8a6251baf619",
+        "type": "rbe",
+        "z": "c14b2c2394cd7539",
+        "name": "Ignore until changed",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 660,
+        "y": 480,
+        "wires": [
+            [
+                "bff72688154fa861",
+                "63c56abc4c02c0c4"
+            ]
+        ]
+    },
+    {
+        "id": "18e6a6484ba72e5f",
+        "type": "debug",
+        "z": "c14b2c2394cd7539",
+        "name": "Servo slider output",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 850,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "eee175785f71a7dd",
+        "type": "mqtt in",
+        "z": "c14b2c2394cd7539",
+        "name": "",
+        "topic": "bressam/nodered/sprinkler/angle",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "cb0cc5b49b11609f",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 230,
+        "y": 700,
+        "wires": [
+            [
+                "98d25725f16f4084"
+            ]
+        ]
+    },
+    {
+        "id": "b07bea537f9c4b77",
+        "type": "ui_switch",
+        "z": "c14b2c2394cd7539",
+        "name": "",
+        "label": "Sprinkler manual control",
+        "tooltip": "",
+        "group": "22f895e84c96de9b",
+        "order": 9,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 250,
+        "y": 860,
+        "wires": [
+            [
+                "adfee6de77120412"
+            ]
+        ]
+    },
+    {
+        "id": "63c56abc4c02c0c4",
+        "type": "ui_led",
+        "z": "c14b2c2394cd7539",
+        "order": 2,
+        "group": "22f895e84c96de9b",
+        "width": 10,
+        "height": 2,
+        "label": "Sprinkler State",
+        "labelPlacement": "right",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#18b983",
+                "value": "true",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "",
+        "x": 890,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "9e50e96517803078",
+        "type": "ui_text",
+        "z": "c14b2c2394cd7539",
+        "group": "22f895e84c96de9b",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Sprinkler State",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 180,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "0b3124251aeb1788",
+        "type": "ui_slider",
+        "z": "c14b2c2394cd7539",
+        "name": "",
+        "label": "",
+        "tooltip": "",
+        "group": "22f895e84c96de9b",
+        "order": 5,
+        "width": 10,
+        "height": 1,
+        "passthru": true,
+        "outs": "end",
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": "100",
+        "step": 1,
+        "className": "",
+        "x": 610,
+        "y": 700,
+        "wires": [
+            [
+                "18e6a6484ba72e5f",
+                "3d2bee4993ac601b"
+            ]
+        ]
+    },
+    {
+        "id": "811ad110486af7c2",
+        "type": "ui_text",
+        "z": "c14b2c2394cd7539",
+        "group": "22f895e84c96de9b",
+        "order": 4,
+        "width": 10,
+        "height": 1,
+        "name": "",
+        "label": "Sprinkler water flow percentage",
+        "format": "",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 230,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "98d25725f16f4084",
+        "type": "range",
+        "z": "c14b2c2394cd7539",
+        "minin": "0",
+        "maxin": "180",
+        "minout": "0",
+        "maxout": "100",
+        "action": "clamp",
+        "round": true,
+        "property": "payload",
+        "name": "",
+        "x": 460,
+        "y": 700,
+        "wires": [
+            [
+                "0b3124251aeb1788"
+            ]
+        ]
+    },
+    {
+        "id": "3d2bee4993ac601b",
+        "type": "range",
+        "z": "c14b2c2394cd7539",
+        "minin": "0",
+        "maxin": "100",
+        "minout": "0",
+        "maxout": "180",
+        "action": "clamp",
+        "round": true,
+        "property": "payload",
+        "name": "",
+        "x": 780,
+        "y": 740,
+        "wires": [
+            [
+                "4ef42f38635657a7"
+            ]
+        ]
+    },
+    {
+        "id": "ad288ba1a0653238",
+        "type": "debug",
+        "z": "c14b2c2394cd7539",
+        "name": "Servo slider output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 750,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "4a394359c7b8a39a",
+        "type": "mqtt in",
+        "z": "c14b2c2394cd7539",
+        "name": "",
+        "topic": "bressam/nodered/sprinkler/manualcontrol",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "cb0cc5b49b11609f",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 800,
+        "wires": [
+            [
+                "a90386bcbfa45d22"
+            ]
+        ]
+    },
+    {
+        "id": "a90386bcbfa45d22",
+        "type": "change",
+        "z": "c14b2c2394cd7539",
+        "name": "String to Bool",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "ON",
+                "fromt": "str",
+                "to": "true",
+                "tot": "bool"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "OFF",
+                "fromt": "str",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 500,
+        "y": 800,
+        "wires": [
+            [
+                "ad288ba1a0653238",
+                "b07bea537f9c4b77"
+            ]
+        ]
+    },
+    {
+        "id": "eb34b6e09d025706",
+        "type": "ui_spacer",
+        "z": "c14b2c2394cd7539",
+        "name": "spacer",
+        "group": "22f895e84c96de9b",
+        "order": 3,
+        "width": 10,
+        "height": 1
+    },
+    {
+        "id": "2702bc1ab9fee344",
+        "type": "ui_spacer",
+        "z": "c14b2c2394cd7539",
+        "name": "spacer",
+        "group": "22f895e84c96de9b",
+        "order": 6,
+        "width": 10,
+        "height": 1
+    },
+    {
+        "id": "a157301ffab43150",
+        "type": "ui_spacer",
+        "z": "c14b2c2394cd7539",
+        "name": "spacer",
+        "group": "22f895e84c96de9b",
+        "order": 7,
+        "width": 10,
+        "height": 1
+    },
+    {
+        "id": "aaf265388008ce4f",
+        "type": "ui_spacer",
+        "z": "c14b2c2394cd7539",
+        "name": "spacer",
+        "group": "22f895e84c96de9b",
+        "order": 8,
+        "width": 10,
+        "height": 1
+    },
+    {
+        "id": "cb0cc5b49b11609f",
+        "type": "mqtt-broker",
+        "name": "HiveMQ MQTT Broker",
+        "broker": "broker.mqttdashboard.com",
+        "port": "1883",
+        "clientid": "client-id-bressam-FlowUse-YfdodFe",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
         "id": "97c1eb79cec3d29b",
         "type": "ui_group",
-        "name": "Umidade",
+        "name": "Humidity",
         "tab": "62bec930eb422899",
         "order": 1,
         "disp": true,
-        "width": "6",
+        "width": "10",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "22f895e84c96de9b",
+        "type": "ui_group",
+        "name": "Sprinkler State",
+        "tab": "62bec930eb422899",
+        "order": 2,
+        "disp": true,
+        "width": 10,
         "collapse": false,
         "className": ""
     },
     {
         "id": "62bec930eb422899",
         "type": "ui_tab",
-        "name": "ESP32",
+        "name": "Smart Square 1: Jardim Botânico",
         "icon": "dashboard",
         "disabled": false,
         "hidden": false
