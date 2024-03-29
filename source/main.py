@@ -59,8 +59,11 @@ def responseReceived(topic, msg):
 # Send data do update node-red MQQT listener
 def updateDashBoard():
     global hal
-    mqttClient.publish("bressam/nodered/led", str(hal.getLedValue()))
-    mqttClient.publish("bressam/nodered/humidity", str(hal.getHumidityValue()))
+    ledStateStr = str(hal.getLedValue())
+    humidityValueStr = str(hal.getHumidityValue())
+    print("Sending data: ", " Humidity: ", humidityValueStr, "Sprinkler and LED State: ", ledStateStr)
+    mqttClient.publish("bressam/nodered/led", ledStateStr)
+    mqttClient.publish("bressam/nodered/humidity", humidityValueStr)
 
 # Setup WLANClient and MQTTClient
 def setupConnection():
@@ -96,7 +99,6 @@ mqttClient.set_callback(responseReceived)
 mqttClient.subscribe("bressam/esp32client")
 
 while True:
-    print("Sending data: ")
     updateDashBoard()
     # Not really a sleep, its waiting for 1s calling check_msg each 0.1s
     mqttClient.sleep(1)
