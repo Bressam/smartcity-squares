@@ -17,7 +17,7 @@ Language used was uPython.
 - The main objective is that the system measures constantly the earth humidity of each sqaure sub division, and if detected low humidity at that division of the square it automatically turns on the sprinklers system and also a light for indication;
 - The system constantly update data remotely to a dashboard (image below), making possible 2 things:
     - Remotely checking values measured (ground humidity and percentage of water flow at sprinklers) and if system is active or not;
-    - Remotely triggering a manual activation of the sprinkle system;
+    - Remotely triggering a manual activation of the sprinkle system, where is possible to also adjust percentage of water flow at the sprinkler;
 
 <img width=720px src="https://github.com/Bressam/smartcity-squares/blob/main/SampleResources/dashboard.png">
 
