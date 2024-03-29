@@ -1,51 +1,13 @@
-import wifi_utils
 import time
 from mqtt_config import MqttDefaultConfig
-from umqttsimple import MQTTClient
 from hal import Hal
+from cloud_iot_service import CloudIOTService
 import _thread
 
+# Variables
 enableMQTTDebugPrint = True
 isUnderManualControl = False
 
-def activateSprinklerIfNeeded():
-    global isUnderManualControl
-    if isUnderManualControl: return
-
-    global hal
-    humidityPercentage = hal.getHumidityValue()
-
-    # Low humidity, turn sprinklers until safe level reached
-    print(humidityPercentage)
-    if humidityPercentage <= 30:
-        hal.setSprinklersTo(True)
-    elif humidityPercentage >= 60:
-        hal.setSprinklersTo(False)
-
-
-# Checks if needed connections are setup
-def checkSetupSuccessfully(mqttClient, wlanStation):
-    return type(mqttClient) is not None and type(wlanStation) is not None
-
-# Initial setup: organize console prints, try to create clients and check if they are setup correctly
-def setup():
-    # Clean terminal logs
-    for i in range(0, 10):
-        print("\n")
-    
-    hal = Hal()
-    # hal.setLoadingIndicationTo(True)
-    wlanStation, mqttClient = setupConnection()
-    if not checkSetupSuccessfully(mqttClient, wlanStation):
-        print("ERROR: Failed to setup connections. Terminating code, disconnecting clients if any exists.")
-        hal.setLoadingIndicationTo(False)
-        if type(mqttClient) is not None:
-            mqttClient.disconnect()
-        if type(wlanStation) is not None:
-            wlanStation.disconnect()
-    else:
-        hal.setLoadingIndicationTo(False)
-        return wlanStation, mqttClient
 
 def responseReceived(topic, msg):
     global hal
@@ -77,55 +39,58 @@ def updateDashBoard():
     sprinklerSystemStateStr = str(hal.getLedValue())
     humidityValueStr = str(hal.getHumidityValue())
     print("Sending data: ", " Humidity: ", humidityValueStr, "Sprinkler state: ", sprinklerSystemStateStr)
-    mqttClient.publish("bressam/nodered/sprinkler", sprinklerSystemStateStr)
-    mqttClient.publish("bressam/nodered/humidity", humidityValueStr)
+    cloudIOTService.sendHumidity(humidityValueStr)
+    cloudIOTService.sendSprinklerState(sprinklerSystemStateStr)
 
     if not isUnderManualControl:
-        sprinklerAngleStr = str(hal.getSprinklerAngle())
-        print("Sending Sprinkler angle: ", sprinklerAngleStr)
-        mqttClient.publish("bressam/nodered/sprinkler/angle", sprinklerAngleStr)
+        sprinklerServoAngleStr = str(hal.getSprinklerAngle())
+        print("Sending sprinkler servo angle: ", sprinklerServoAngleStr)
+        cloudIOTService.sendSprinklerPercentage(sprinklerServoAngleStr)
 
-# Setup WLANClient and MQTTClient
-def setupConnection():
-    # Wokwi virtual SSID and password
-    wifiSSID = "Wokwi-GUEST"
-    wifiPassword = ""
-    mqttDefaultConfig = MqttDefaultConfig()
+# Checks if needed connections are setup
+def checkSetupSuccessfully(mqttClient, wlanStation):
+    return type(mqttClient) is not None and type(wlanStation) is not None
 
-    # Start connection
-    print("Connecting...")
-    wlanStation = wifi_utils.createWLANStation(wifiSSID, wifiPassword)
-    if not wlanStation.isconnected():
-        print("ERROR: Wi-Fi connection failed")
+# Initial setup: organize console prints, try to create clients and check if they are setup correctly
+def setup():
+    # Clean terminal logs
+    for i in range(0, 10):
+        print("\n")
+    
+    hal = Hal()
+    cloudIOTService = CloudIOTService(MqttDefaultConfig(), "bressam/esp32client", responseReceived)
+    if not checkSetupSuccessfully(cloudIOTService.mqttClient, cloudIOTService.wlanStation):
+        print("ERROR: Failed to setup connections. Terminating code, disconnecting clients if any exists.")
+        if type(mqttClient) is not None:
+            mqttClient.disconnect()
+        if type(wlanStation) is not None:
+            wlanStation.disconnect()
     else:
-        print("Wi-Fi connected")
-        print("Connecting to MQTT Broker...")
-        client = MQTTClient(
-            mqttDefaultConfig.mqtt_client_id,
-            mqttDefaultConfig.mqtt_server,
-            mqttDefaultConfig.mqtt_port,
-            mqttDefaultConfig.mqtt_user,
-            mqttDefaultConfig.mqtt_password)
-        client.connect()
-        mqttClient = client
-        print("Connected sucessfully to MQTT Broker!")
-        return wlanStation, mqttClient
+        return hal, cloudIOTService
 
 
-# Send data through connection setup
-hal = Hal()
-wlanStation, mqttClient = setup()
+# Sprinkler control based on humidity level
+def activateSprinklerIfNeeded():
+    global isUnderManualControl
+    if isUnderManualControl: return
+
+    global hal
+    humidityPercentage = hal.getHumidityValue()
+    # Low humidity, turn sprinklers until safe level reached
+    print(humidityPercentage)
+    if humidityPercentage <= 30:
+        hal.setSprinklersTo(True)
+    elif humidityPercentage >= 60:
+        hal.setSprinklersTo(False)
+
+## Main
+hal, cloudIOTService = setup()
 # Start syncing manual to off to remote control
-mqttClient.publish("bressam/nodered/sprinkler/manualcontrol", "OFF")
-
-# Setup callbacks and listener
-mqttClient.set_callback(responseReceived)
-mqttClient.subscribe("bressam/esp32client")
+cloudIOTService.sendManualControlState(False)
 
 # Main loop
 while True:
     hal.perfomSensorReading()
     activateSprinklerIfNeeded()
     updateDashBoard()
-    # Not really a sleep, its waiting for 1s calling check_msg each 0.1s
-    mqttClient.sleep(1)
+    cloudIOTService.listenSubscriptionFor(1)
