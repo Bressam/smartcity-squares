@@ -4,7 +4,7 @@ from hal import Hal
 from cloud_iot_service import CloudIOTService
 import _thread
 
-version = 1.001.000
+version = 1.002.000
 
 # Variables
 enableMQTTDebugPrint = True
