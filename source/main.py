@@ -1,13 +1,10 @@
 import wifi_utils
 import time
-from servo import Servo
 from mqtt_config import MqttDefaultConfig
 from umqttsimple import MQTTClient
-from machine import Pin
+from hal import Hal
+import _thread
 
-#Pins
-LED = Pin(5, Pin.OUT)
-servo = Servo(2)
 
 # Checks if needed connections are setup
 def checkSetupSuccessfully(mqttClient, wlanStation):
@@ -18,38 +15,52 @@ def setup():
     # Clean terminal logs
     for i in range(0, 10):
         print("\n")
-
+    
+    hal = Hal()
+    # hal.setLoadingIndicationTo(True)
     wlanStation, mqttClient = setupConnection()
     if not checkSetupSuccessfully(mqttClient, wlanStation):
         print("ERROR: Failed to setup connections. Terminating code, disconnecting clients if any exists.")
+        hal.setLoadingIndicationTo(False)
         if type(mqttClient) is not None:
             mqttClient.disconnect()
         if type(wlanStation) is not None:
             wlanStation.disconnect()
     else:
+        hal.setLoadingIndicationTo(False)
         return wlanStation, mqttClient
 
 def responseReceived(topic, msg):
+    global hal
     print(topic)
     print(msg)
-    if msg.decode() == "ON":
-        LED.on()
-    if msg.decode() == "OFF":
-        LED.off()
-    servoAngle = msg.decode()
-    print(servoAngle)
-    print(type(servoAngle))
-    servoAngleInt = int(servoAngle)
-    print(servoAngleInt)
-    print(type(servoAngleInt))
-    servo.set_angle(servoAngleInt)
-    # if servoAngle > 0 and servoAngle <= 180:
-    #     servo.set_angle(servoAngle)
+
+    # LED Control
+    if msg.decode() == "ON" or msg.decode() == "OFF":
+        if msg.decode() == "ON":
+            hal.setLedOn()
+        if msg.decode() == "OFF":
+            hal.setLedOff()
+    # Sprinkler control
+    else:
+        servoAngle = msg.decode()
+        if servoAngle.isdigit():
+            print(servoAngle)
+            print(type(servoAngle))
+            servoAngleInt = int(servoAngle)
+            print(servoAngleInt)
+            print(type(servoAngleInt))
+            hal.setServoAngle(servoAngleInt)
+            # if servoAngle > 0 and servoAngle <= 180:
+            #     servo.set_angle(servoAngle)
+    
     updateDashBoard()
 
 # Send data do update node-red MQQT listener
 def updateDashBoard():
-    mqttClient.publish("bressam/nodered/led", str(LED.value()))
+    global hal
+    mqttClient.publish("bressam/nodered/led", str(hal.getLedValue()))
+    mqttClient.publish("bressam/nodered/humidity", str(hal.getHumidityValue()))
 
 # Setup WLANClient and MQTTClient
 def setupConnection():
@@ -79,16 +90,15 @@ def setupConnection():
 
 
 # Send data through connection setup
+hal = Hal()
 wlanStation, mqttClient = setup()
 mqttClient.set_callback(responseReceived)
 mqttClient.subscribe("bressam/esp32client")
 
-print("Waiting for responses for 60s")
-# Not really a sleep, it waitis 60s calling check_msg each 0.1s
-# mqttClient.sleep(60)
-for i in range(3*60):
-    print("Sending data: " + f"{i}")
-    mqttClient.publish("bressam/nodered/loop", f"{i}")
+while True:
+    print("Sending data: ")
+    updateDashBoard()
+    # Not really a sleep, its waiting for 1s calling check_msg each 0.1s
     mqttClient.sleep(1)
 
 #publish test
